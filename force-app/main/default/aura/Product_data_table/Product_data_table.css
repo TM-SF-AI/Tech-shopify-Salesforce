@@ -1,0 +1,34 @@
+.THIS .slds-checkbox{
+   /* width: 5px;*/
+}
+.THIS .slds-input-has-icon{
+    width: 15rem;
+}
+.THIS .iconsdiv{
+    padding:30px;
+    padding-top: 20px;
+}
+.THIS .inputselect{
+    padding-bottom: 0px;
+}
+.THIS .custom-div-0
+{
+    max-width: 650px;
+    margin: 0 auto;
+}
+.THIS .custom-div-0 h1.slds-page-header__title {
+    text-align: center;
+    margin-bottom: 15px;
+}
+.THIS .custom-div-0 .slds-form-element_stacked {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+}
+.THIS .ABC{
+    font-size: 0.8125rem;
+}
+.THIS .slds-scrollable_y{
+    height:5rem;
+    width:15rem;
+}

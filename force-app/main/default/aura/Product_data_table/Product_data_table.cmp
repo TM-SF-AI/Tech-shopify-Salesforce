@@ -1,0 +1,421 @@
+<aura:component controller="ProductData"  implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+    <aura:attribute name="ProductList" type="Product2[]"/>
+    <aura:attribute name="ProductDataType" type="String" default="Shopify"/>
+    <aura:attribute name="deleteProductid" type="String"/> 
+      <aura:attribute name="VendorName" type="String" default="slds-hide"/> 
+      <aura:attribute name="PriceHide" type="String" default="slds-hide"/> 
+
+    <aura:attribute name="ExportProductid" type="String"/> 
+    <aura:attribute name="Shopid" type="String" description="use for store user Shop id as input"/>
+    <aura:attribute name="ShopName" type="String[]" description="use for picklist Shop name as input"/>
+    <aura:attribute name="SyncProductid" type="String"/>
+    <aura:attribute name="searchKeyword" type="String" default="" description="use for store user search input"/>
+    <aura:attribute name="PageNumber" type="integer" default="1"/>
+    <aura:attribute name="TotalPages" type="integer" default="0"/>
+    <aura:attribute name="TotalRecords" type="integer" default="0"/>
+    <aura:attribute name="RecordStart" type="integer" default="0"/>
+    <aura:attribute name="RecordEnd" type="integer" default="0"/>
+    <!--<aura:attribute name="HideButtons" type="String" default="slds-show" />-->
+    <aura:attribute name="TotalNumberOfRecord" type="integer" default="0" description="use for display Number of records"/>
+    <aura:attribute name="isSelectAll" type="boolean" default="false"/> 
+    <aura:attribute name="Toggleclass" type="string" default="slds-hide"/>  
+    <aura:attribute name="ConditionalSyncToggleClass" type="string" default="slds-hide"/> 
+    <aura:attribute name="options" type="string[]" />
+    <aura:attribute name="selectedCount" type="integer" default="0"/>
+    <aura:attribute name="totalids" type="string[]" />     
+    <aura:attribute name="allids" type="list" /> 
+    <aura:attribute name="shopurl" type="list"/>
+    <aura:attribute name="activelable" type="boolean" default ="False" />
+    <!-- Attribute table show/hide -->
+    <aura:attribute name="IdHide" type="String" default="slds-hide"/>
+    <aura:attribute name="CreatedByIdHide" type="String" default="slds-hide"/>
+    <aura:attribute name="CreatedDateHide" type="String" default="slds-hide"/> 
+    <aura:attribute name="DescriptionHide" type="String" default="slds-hide"/>     
+    <aura:attribute name="DisplayUrlHide" type="String" default="slds-hide"/> 
+    <aura:attribute name="LastModifiedDateHide" type="String" default="slds-hide"/>
+    <aura:attribute name="IsActiveHide" type="String" default="slds-hide"/>
+    <aura:attribute name="IsDeletedHide" type="String" default="slds-hide"/>
+    <aura:attribute name="ProductCodeHide" type="String" default="slds-hide"/>
+    <aura:attribute name="Shopify_HandleHide" type="String" default="slds-hide"/>
+    <aura:attribute name="Shopify_Product_TypeHide" type="String" default="slds-hide"/>
+    <aura:attribute name="Shopify_Product_DescriptionHide" type="String" default="slds-hide"/>
+    <aura:attribute name="Shopify_Shop_UrlHide" type="String" default="slds-hide"/>
+    <aura:attribute name="TagHide" type="String" default="slds-hide"/>
+    <aura:attribute name="key" type="String" default="two" />
+    <aura:attribute name="UpdatedAfter" type="Date" />
+    <aura:attribute name="UpdatedBefore" type="Date" />
+    <aura:attribute name="PublishedAfter" type="Date" />
+    <aura:attribute name="PublishedBefore" type="Date" />
+    <aura:attribute name="messageshow" type="String" default="slds-hide"/>
+    <aura:attribute name="Hidefamily" type="String" default="slds-hide"/>
+
+   <!-- <aura:handler name="init" value="{!this}" action="{!c.doInit}" />-->
+    <aura:handler name="change" value="{!v.key}" action="{!c.selectTab}"/>
+    
+    <aura:attribute name="messageType" type="String"/>
+    <aura:attribute name="message" type="String"/>
+    
+    
+    <c:MessageComponent type="{!v.messageType}" message="{!v.message}" class="{!v.messageshow}"/>
+    
+    <lightning:tabset variant="scoped" aura:id="tabs" selectedTabId="two" >
+       <!-- <lightning:tab id="-LplUSA3_QCrN3hTByRM" onactive="{!c.Configurationcomponent}">
+            <aura:set attribute="label">
+                <lightning:icon iconName="utility:settings" size="small"></lightning:icon>Configuration</aura:set>
+        </lightning:tab> -->
+        <lightning:tab id="two" onactive="{!c.doInit}" >
+            <!--<aura:set attribute="label">
+                <lightning:icon iconName="standard:hierarchy" size="small"></lightning:icon>Products</aura:set> -->
+            <br/>
+            
+            <div class="slds-container_fluid">
+                <div class="slds-media slds-p-around_x-small slds-p-top_x-small slds-p-right_x-small slds-p-bottom_x-small slds-p-left_x-small">
+                    <div class="slds-media__figure">
+                        <lightning:avatar alternativeText="" fallbackIconName="utility:hierarchy" size="slds-avatar_medium" src="" variant="square"></lightning:avatar>
+                    </div>
+                    <div class="slds-media__body">
+                        <div class="slds-text-heading_medium" contenteditable="false">Products</div>
+                        <div Class="ABC"  contenteditable="false"><b>Total Records : </b>{!v.TotalRecords} </div>
+                    </div>
+                    <div class="slds-media__figure slds-media__figure_reverse"></div>
+                </div>c
+            </div>
+            
+            <article class="slds-card">
+                <!-- SHOW LOADING SPINNER--> 
+                <lightning:spinner variant="brand" size="large" aura:id="Id_spinner" class="slds-hide" />
+                
+                <div class="slds-p-horizontal_x-small">
+                    
+                    <div class="slds-align_absolute-center">
+                        
+                        <div class="iconsdiv">
+                            <lightning:button label="Create Product"  variant="neutral" type="button" iconName="utility:add" onclick="{!c.createRecordProduct}"/>
+                            <lightning:button variant="success" iconName="utility:download" label="Import All Data" title="Import All Data" onclick="{!c.SyncProduct }" />
+                            <lightning:button label="Delete Selected" iconName="utility:delete" iconPosition="left"
+                                              variant="destructive" onclick="{!c.deleteSelectedAll}">
+                            </lightning:button>
+                       <!--     <lightning:button label="Conditional Sync Product" iconName="utility:sync" iconPosition="left"
+                                              variant="neutral" onclick="{!c.SyncConditionalProduct}">
+                            </lightning:button>  -->
+                            <lightning:button label="Filters" title="click to show/hide filters" iconName="utility:filterList" iconPosition="left"
+                                              variant="brand" onclick="{!c.filterProduct}">
+                            </lightning:button>
+                            <lightning:button label="Export Selected" title="Export Selected To Shopify" iconName="utility:internal_share" iconPosition="left"
+                                              variant="neutral" onclick="{!c.exporttoShopifySelected}">
+                            </lightning:button>
+                        </div>
+                    </div>
+                    <div class="{!v.Toggleclass}">
+                        <div class="slds-m-bottom_small slds-page-header custom-div-0">
+                            <h1 class="slds-page-header__title">FILTER HERE: </h1>
+                            <div class="slds-form-element_stacked slds-grid slds-wrap">
+                                
+                                <lightning:select aura:id="OrgType" class="slds-size--1-of-4" name="select1" label="Org Type" onchange="{!c.ListOfProductType}">
+                                    <option value="All">All</option>
+                                    <option value="Salesforce">Salesforce</option>
+                                    <option value="Shopify">Shopify</option>
+                                </lightning:select>
+                                <!--    <lightning:select class="slds-size-1-of-4" name="select1" label="Shop Name" >
+                                    <option value="All">All</option>
+                                    <aura:iteration items="{!v.ShopName}" var="per">
+                                        <option value="{!per}" text="{!per}" /> 
+                                    </aura:iteration>
+                                </lightning:select>
+                                
+                                 <tbody  class="slds-scrollable_y" >
+                            <aura:iteration items="{!v.options}" var="pr"> 
+                                <tr>
+                                    <th>
+                                        <label class="slds-checkbox">
+                                            <ui:inputCheckbox aura:id="checkContact" value="" text="{!pr}" change="{!c.onCheck}"/>
+                                            <span class="slds-checkbox-faux" />
+                                            <span class="slds-form-element__label"></span>
+                                        </label>
+                                    </th>
+                                    <th scope="row" data-label="Image">
+                                        <div class="slds-truncate" title="{!pr}">{!pr}</div>
+                                    </th>
+                                </tr>
+                            </aura:iteration> 
+                        </tbody> -->
+                                
+                                <tbody>
+                                    <h1>Choose Fileds to Display </h1>
+                                    <div class="slds-scrollable_y"  >
+                                        
+                                        <aura:iteration items="{!v.options}" var="pr"> 
+                                            <tr>
+                                                <th>
+                                                    <label class="slds-checkbox">
+                                                        <ui:inputCheckbox aura:id="checkContact" value="" text="{!pr}" change="{!c.onCheck}"/>
+                                                        <span class="slds-checkbox--faux" />
+                                                        <span class="slds-form-element__label"></span>
+                                                    </label>
+                                                </th>
+                                                <th scope="row" data-label="Image">
+                                                    <div class="slds-truncate" title="{!pr}">{!pr}</div>
+                                                </th>
+                                            </tr>
+                                        </aura:iteration> 
+                                    </div>
+                                </tbody>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="{!v.ConditionalSyncToggleClass}">
+                        <div class="slds-theme_shade slds-align_absolute-center">
+                            <lightning:layout multipleRows="true">
+                                <lightning:layoutItem size="6">
+                                    <lightning:input type="date" name="Updated After" label="Updated After" value="{!v.UpdatedAfter}"/>
+                                </lightning:layoutItem>
+                                <lightning:layoutItem size="6" >
+                                    <lightning:input type="date" name="Updated Before" label="Updated Before" value="{!v.UpdatedBefore}"/>
+                                </lightning:layoutItem>
+                                <lightning:layoutItem size="6" >
+                                    <lightning:input type="date" name="Published After" label="Published After" value="{!v.PublishedAfter}"/>
+                                </lightning:layoutItem>
+                                <lightning:layoutItem size="6">
+                                    <lightning:input type="date" name="Published Before" label="Published Before" value="{!v.PublishedBefore}"/>
+                                </lightning:layoutItem>
+                            </lightning:layout>
+                        </div> 
+                        <div class="slds-theme_shade slds-align_absolute-center slds-p-top_x-large">
+                            <lightning:button label="Sync" title="Sync" variant="neutral" onclick="{!c.SyncConditional}">
+                            </lightning:button>
+                        </div>
+                    </div>
+                    <br/>
+                    <div class="slds-float_right inputselect">
+                        <ui:inputSelect aura:id="pageSize" label="Show Entries " change="{!c.onSelectChange}">
+                            <ui:inputSelectOption text="5" label="5" value="true"/>
+                            <ui:inputSelectOption text="10" label="10"/>
+                            <ui:inputSelectOption text="15" label="15"/>
+                            <ui:inputSelectOption text="20" label="20"/>
+                            <ui:inputSelectOption text="50" label="50"/>
+                        </ui:inputSelect>
+                    </div>
+                    <br/>
+                    <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_left">
+                        <lightning:icon class="slds-icon slds-input__icon slds-input__icon_left slds-icon-text-default" iconName="utility:search" size="x-small" alternativeText="Search address"/>
+                        <lightning:input value="{!v.searchKeyword}"
+                                         placeholder="Search Products"
+                                         label="Name"  
+                                         type="text"  onkeyup="{!c.Search}"
+                                         variant="label-hidden"/>
+                    </div>
+                    <br/>
+                    <div class="slds-scrollable_x">
+                        <table class="slds-table  slds-table_cell-buffer slds-table_bordered " >
+                            <thead>
+                                <tr class="slds-text-title_caps">
+                                    <th>           
+                                        <label class="slds-checkbox">
+                                            <ui:inputCheckbox value="" change="{!c.selectAll}" aura:id="box3"/>
+                                            <span class="slds-checkbox--faux" />
+                                            <span class="slds-form-element__label"></span>
+                                        </label>
+                                    </th>
+                                    <th scope="col">
+                                        <strong><div class="slds-truncate" title="Shop URL">Image</div></strong>
+                                    </th>
+                                    <th scope="col">
+                                        <strong><div class="slds-truncate" title="Title">Title</div></strong>
+                                    </th>
+                                   <th scope="col">
+                                        <strong><div class="{!v.VendorName}" title="Vendor Name">Vendor Name</div></strong>
+                                    </th> 
+                                  <th scope="col">
+                                        <strong><div class="slds-truncate" title="Shopify ProductID">Shopify ProductID</div></strong>
+                                    </th>
+                                    <th scope="col">
+                                        <strong><div class="{!v.PriceHide}" title="Shopify Product Price">Shopify Product Price</div></strong>
+                                    </th>   
+                                    <th scope="col">
+                                        <strong><div class="slds-truncate" title="Product ID">Product ID </div></strong>
+                                    </th> 
+                                    <th scope="col">
+                                        <strong><div class="slds-truncate" title="Shopify variant id">Product variant id </div></strong>
+                                    </th> 
+                                    <th scope="col">
+                                        <strong><div class="{!v.CreatedByIdHide}" title="CreatedBy Id">Product CreatedByID </div></strong>
+                                    </th> 
+                                    <th scope="col">
+                                        <strong><div class="{!v.CreatedDateHide}" title="CreatedDate">Product CreatedDate </div></strong>
+                                    </th> 
+                                    
+                                    <th scope="col">
+                                        <strong><div class="{!v.DisplayUrlHide}" title="Product DisplayUrl">Product DisplayUrl</div></strong>
+                                    </th>  
+                                    <th scope="col">
+                                        <strong><div class="{!v.LastModifiedDateHide}" title="Product LastModifiedDate">Product LastModifiedDate</div></strong>
+                                    </th>
+                                    
+                                    <th scope="col">
+                                        <strong><div class="{!v.ProductCodeHide}" title="Product IsDeleted">ProductCode</div></strong>
+                                    </th> 
+                                    <th scope="col">
+                                        <strong><div class="{!v.Shopify_HandleHide}" title="Shopify_Handle">Shopify Handle</div></strong>
+                                    </th>
+                                    <th scope="col">
+                                        <strong><div class="{!v.Shopify_Product_TypeHide}" title="Shopify Product type"> Shopify Product type</div></strong>
+                                    </th>
+                                 <!--   <th scope="col">
+                                        <strong><div class="{!v.Shopify_Product_DescriptionHide}" title="Shopify Product Description">Shopify Product Description</div></strong>
+                                    </th> -->
+                                  <!--  <th scope="col">
+                                        <strong><div class="{!v.Shopify_Shop_UrlHide}" title="Shopify Shop Url">Shopify Shop Url</div></strong>
+                                    </th> -->
+                                    <th  scope="col">
+                                        <strong><div class="{!v.TagHide}" title="Shopify Tag">Shopify Tag</div></strong>
+                                    </th>
+                                    <th scope="col">
+                                        <strong><div class="slds-truncate" title="Shop_url">Shop url</div></strong>
+                                    </th>
+                                    <th scope="col">
+                                        <strong><div class="{!v.Hidefamily}" title="Family">Product Family</div></strong>
+                                    </th>
+                                    <th scope="col">
+                                        <strong><div class="slds-truncate" title="Product">Product</div></strong>
+                                    </th> 
+                                    <th scope="col">
+                                        <strong><div class="slds-truncate" title="IsActive">Active</div></strong>
+                                    </th> 
+                                    <th scope="col">
+                                        <strong><div class="slds-truncate" title="ACTION">Action</div></strong>
+                                    </th> 
+                                    
+                                </tr>
+                            </thead>
+                            <tbody >
+                                <aura:iteration items="{!v.ProductList}" var="pr"> 
+                                    <tr>
+                                        <th>
+                                            <div id="Checkboxeswithid" data-Id="{!pr.Id}" data-value ="{!pr.TechnologyMind__Shopify_Shop_Url__c}" class="slds-form-element__row">
+                                                <lightning:input aura:id="boxPack" checked="" type="checkbox" label="" onchange="{!c.checkboxSelect}"></lightning:input>
+                                            </div>
+                                        </th>
+                                        <th scope="row" data-label="Image">
+                                        <img src="{!pr.TechnologyMind__Shopify_Product_Image_URL__c}" width="100" height="100" data-aura-rendered-by="8:2829;a"></img>
+                                   
+                                        </th>
+                                        
+                                        <th scope="row" data-label="Name">
+                                            <a href="{!'/lightning/r/Product2/'+pr.Id+'/view'}"><div class="slds-truncate" title="{!pr.Name}">{!pr.Name}</div></a>
+                                        </th>
+                                        <th scope="row" data-label="Shopify Vendor Name">
+                                            <div class="{!v.VendorName}" title="{!pr.TechnologyMind__Shopify_Vendor_Name__c}">{!pr.TechnologyMind__Shopify_Vendor_Name__c}</div>
+                                        </th> 
+                                       <th scope="row" data-label="Shopify ProductID">
+                                            <div class="slds-truncate" title="{!pr.TechnologyMind__Shopify_Product_Id__c}">{!pr.TechnologyMind__Shopify_Product_Id__c}</div>
+                                        </th> 
+                                        <th scope="row" data-label=" Shopify Product Price">
+                                            <div class="{!v.PriceHide}" title="{!pr.TechnologyMind__Price__c}">${!pr.TechnologyMind__Price__c}</div>
+                                        </th>  
+                                        <th scope="row" data-label="Product ID">
+                                            <div class="slds-truncate" title="{!pr.Id}">{!pr.Id}</div>
+                                        </th>
+                                        <th scope="row" data-label="Shopify variant id">
+                                            <div class="slds-truncate" title="{!pr.TechnologyMind__Shopify_variant_id__c}">{!pr.TechnologyMind__Shopify_variant_id__c}</div>
+                                        </th>
+                                        
+                                        <th scope="row" data-label="Product CreatedBy">
+                                            <div class="{!v.CreatedByIdHide}" title="{!pr.CreatedBy.Name}">{!pr.CreatedBy.Name}</div>
+                                        </th>
+                                        <th scope="row" data-label="Product CreatedDate">
+                                            <div class="{!v.CreatedDateHide}" title="{!pr.CreatedDate}"><lightning:formattedDateTime value="{!pr.CreatedDate}"/></div>
+                                        </th> 
+                                         <!--<th scope="row" data-label="Product DisplayUrl">
+                                            <div class="{!v.DisplayUrlHide}" title="{!pr.DisplayUrlHide}">{!pr.DisplayUrlHide}</div>
+                                        </th> -->
+                                        
+                                        <th scope="row" data-label="Product DisplayUrl">
+                                            <a href="{!'/lightning/r/TechnologyMind__Shopify_Shop_Url__c/'+pr.Id+'/view'}"> <div class="{!v.DisplayUrlHide}" title="{!pr.TechnologyMind__Shopify_Product_Image_URL__c}">{!pr.TechnologyMind__Shopify_Product_Image_URL__c}</div> </a>
+                                        </th>
+                                        <th scope="row" data-label="Product LastModifiedDate">
+                                            <div class="{!v.LastModifiedDateHide}" title="{!pr.LastModifiedDate}"><lightning:formattedDateTime value="{!pr.LastModifiedDate}"/></div>
+                                        </th>
+                                        
+                                        <th scope="row" data-label="ProductCode">
+                                            <div class="{!v.ProductCodeHide}" title="{!pr.ProductCode}">{!pr.ProductCode}</div>
+                                        </th>  
+                                        <th scope="row" data-label="Shopify Handle">
+                                            <div class="{!v.Shopify_HandleHide}" title="{!pr.TechnologyMind__Shopify_Handle__c}">{!pr.TechnologyMind__Shopify_Handle__c}</div>
+                                        </th>
+                                        <th scope="row" data-label="Shopify Product Type">
+                                            <div class="{!v.Shopify_Product_TypeHide}" title="{!pr.TechnologyMind__Shopify_Product_Type__c}">{!pr.TechnologyMind__Shopify_Product_Type__c}</div>
+                                        </th>
+                                     <!--   <th scope="row" data-label="Shopify Product Description">
+                                            <div class="{!v.Shopify_Product_DescriptionHide}" title="{!pr.TechnologyMind__Shopify_Product_Description__c}">{!pr.TechnologyMind__Shopify_Product_Description__c}</div>
+                                        </th> -->
+                                       <!-- <th scope="row" data-label="Shopify_Shop_Url">
+                                            <div class="{!v.Shopify_Shop_UrlHide}" title="{!pr.TechnologyMind__Shopify_Shop_Url__c}">{!pr.TechnologyMind__Shopify_Shop_Url__c}</div>
+                                        </th> -->
+                                        <th scope="row" data-label="Tags__c">
+                                            <div class="{!v.TagHide}" title="{!pr.TechnologyMind__Tags__c}">{!pr.TechnologyMind__Tags__c}</div>
+                                        </th>
+                                         <th scope="row" data-label="Shopify_Shop_Url__c">
+                                            <div class="slds_truncate" title="{!pr.TechnologyMind__Shopify_Shop_Url__c}">{!pr.TechnologyMind__Shopify_Shop_Url__c}</div>
+                                        </th>
+                                        <th scope="row" data-label="Family">
+                                            <div class="{!v.Hidefamily}" title="{!pr.Family}">{!pr.Family}</div>
+                                        </th>
+                                        <th scope="row" data-label="Product__c">
+                                            <div class="slds_truncate" title="{!pr.TechnologyMind__Product__c}">{!pr.TechnologyMind__Product__c}</div>
+                                        </th> 
+                                         <th scope="row" data-label="IsActive">
+                                          <!--   <div class="{!v.activelable}" title="{!pr.IsActive}">{!pr.IsActive}</div>   -->
+                                            <div id ="divtoggle" class="{!v.activelable}" data-Id="{!idx}" data-value ="{!pr.Id}" >
+                                            <lightning:input aura:id="toggleid" type="toggle" label="" name="input2" checked="{!pr.IsActive}" onchange="{!c.activechange}"/>
+                                        </div>
+                                        </th>
+                                        <th scope="row">
+                                         <!--  <div id="Preview" data-Id="{!pr.Shopify_Product_Id__c}" data-value ="{!pr.Shopify_Shop_Url__c}" class="slds-form-element__row">
+                                                <aura:if isTrue="{!pr.Product__c == 'Salesforce'}">
+                                                    <lightning:buttonIcon value="{!pr.Id}" class="" alternativeText="Salesforce Preview" iconClass="" variant="bare" type="button" iconName="utility:preview" size="large" onclick="{!c.PreviewSalesforceProduct}"></lightning:buttonIcon>
+                                                    <aura:set attribute="else">
+                                                        <lightning:buttonIcon value="{!pr.Shopify_Handle__c}" class="" alternativeText="Preview" iconClass="" variant="bare" type="button" iconName="utility:preview" size="large" onclick="{!c.PreviewProduct}"></lightning:buttonIcon>
+                                                    </aura:set>
+                                                </aura:if> -->
+                                            
+                                               <div>
+                                                     <div id="Preview" data-Id="{!pr.Id}" data-value ="{!pr.TechnologyMind__Shopify_Shop_Url__c}" class="slds-form-element__row">
+                                                <a href="{!pr.TechnologyMind__Shopify_Shop_Url__c+'admin/products/'+pr.TechnologyMind__Shopify_Product_Id__c}"><lightning:buttonIcon  alternativeText="view on website" iconClass="" variant="bare" type="button" iconName="utility:preview" size="large" ></lightning:buttonIcon></a>
+                                                <lightning:buttonIcon aura:id="ButtonProducts" value="{!pr.Id}" class="" alternativeText="Delete" iconClass="" variant="bare" type="button" iconName="utility:delete" size="large" onclick="{!c.DeleteProduct}"></lightning:buttonIcon>
+                                             <!--   <lightning:buttonIcon value="{!pr.TechnologyMind__Shopify_Product_Id__c}" class="" alternativeText="Sync" iconClass="" variant="bare" type="button" iconName="utility:sync" size="large" onclick="{!c.singleSyncProduct}"></lightning:buttonIcon>    -->
+                                                <lightning:buttonIcon value="{!pr.Id}" class="" alternativeText="Export To Shopify" iconClass="" variant="bare" type="button" iconName="utility:internal_share" size="large" onclick="{!c.exporttoShopifySingle}"></lightning:buttonIcon>
+                                            </div>
+                                            </div>
+                                        </th>
+                                    </tr> 
+                                </aura:iteration> 
+                            </tbody>
+                        </table>
+                    </div>
+                    <br/>
+                    <div class="slds-clearfix">
+                        <div class="slds-align_absolute-center"> 
+                            <div class="{!v.HideButtons}">
+                                <lightning:button disabled="{!v.PageNumber == 1}" variant="brand" aura:id="prevPage" label="Prev" onclick="{!c.handlePrev}" /> &nbsp;           
+                                <lightning:button disabled="{!v.PageNumber >= v.TotalPages}" aura:id="nextPage" variant="brand" label="Next" onclick="{!c.handleNext}"/>
+                            </div>
+                        </div>
+                        <div class="slds-float_right">
+                            <h1>{!v.RecordStart}-{!v.RecordEnd} of {!v.TotalRecords} Records | Page {!v.PageNumber} of {!v.TotalPages}</h1>
+                        </div>
+                    </div>
+                </div>	
+            </article>
+        </lightning:tab>
+     <!--  <lightning:tab id="-Lpm55kQCnRU1N0w2_zA" onactive="{!c.Customerscomponent}" >
+            <aura:set attribute="label">
+                <lightning:icon iconName="standard:groups" size="small"></lightning:icon>Customers</aura:set>
+            <br/>
+        </lightning:tab>
+        <lightning:tab id="-Lpm561rZamzGJv5VMw_" onactive="{!c.Orderscomponent}">
+            <aura:set attribute="label">
+                <lightning:icon iconName="standard:cart" size="small"></lightning:icon>Orders</aura:set>
+            <br/>
+        </lightning:tab> -->
+    </lightning:tabset>
+</aura:component>

@@ -1,0 +1,30 @@
+.THIS .selectallcheckbox{
+   width: 10px;
+}
+.THIS .filterheading{
+    font-size:20px;
+}
+.THIS .Choosefieldsheader{
+    font-size:15px;
+}
+.THIS .filterdiv{
+    width:800px;
+}
+.THIS .slds-input-has-icon{
+    width: 15rem;
+}
+.THIS .filterdiv.slds-align_absolute-center .slds-m-bottom_small.slds-page-header {
+    width: 500px;
+}
+.THIS .filterdiv.slds-align_absolute-center .slds-m-bottom_small.slds-page-header .slds-media__body {
+    display: flex;
+}
+.THIS .ABC{
+  font-size: 0.8125rem;
+}
+.THIS .slds-scrollable_y{
+  height:7rem;
+}
+.THIS.slds-scrollable_x{
+  width:87rem;
+}

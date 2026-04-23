@@ -1,0 +1,47 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global">
+    <div class="slds-box slds-theme_default slds-m-vertical_x-small">
+        <div class="border-bottom-brand-1x">
+            <h3 class="slds-page-header__title text-color-brand">Features</h3>
+        </div>
+        <div class="slds-p-around_small body">
+            <ul class="slds-list--dotted">
+                <li>Provides unified Salesforce platform to manage both e-Commerce and CRM data.</li>
+                <li>Multi-store oriented integration to enhance management of e-Commerce data more efficiently.</li>
+                <li>Real-time synchronization for Products, Customers, and Orders from Shopify to Salesforce.</li>
+                <li>Effective utilization of multiple Shopify stores in single Salesforce CRM.</li>
+                <li>Synchronize e-Commerce data at Salesforce end to avail CRM benefits.</li>
+                <li>Salesforce Centric configuration concept to avail hassle free environment.</li>
+                <li>Orders and Products synchronization to manage Inventory effectively.</li>
+                <li>Customers synchronization as Accounts and Contacts at Salesforce end.</li>
+                <li>Interactive design with the user interface at Salesforce end adding on effective data utilization</li>
+                <li>Synchronization Of variant as a Product from Shopify to salesforce end.</li>
+                Note: Variant would synchronize as a Product to salesforce end once you have deleted the all Shopify products from Salesforce end.
+            </ul>
+        </div>
+    </div>
+    <div class="slds-box slds-theme_default slds-m-vertical_x-small">
+        <div class="border-bottom-brand-1x">
+            <h3 class="slds-page-header__title text-color-brand">Prerequisites after installation:</h3>
+        </div>
+        <div class="slds-p-around_small body">
+            <ul class="slds-list--dotted">
+                Once you install Salesforce Shopify Sync from AppExchange. Go through the screenshots mentioned below:
+                <li>Go to Setup | Remote site settings | set site name | site url | enable the checkbox to activate the site </li>      
+                <img class="slds-p-vertical_small" src="{!$Resource.Remote_site_setting}"/>
+                
+                <li>Click on Add Shop button, fill the required fields in General step then click on next, see the object mapping and then click on next and set the field mapping accordingly.</li>
+                <img class="slds-p-vertical_small" src="{!$Resource.Add_shop}"/>
+                <br/>
+                <li>Configure the shop details:</li>
+                <img class="slds-p-vertical_small" src="{!$Resource.ObjectMapping}"/>
+                <br/>
+                <img class="slds-p-vertical_small" src="{!$Resource.Customer_field_Mapping}"/>
+                <img class="slds-p-vertical_small" src="{!$Resource.Product_field_mapping}"/>
+                <br/>
+                <img class="slds-p-vertical_small" src="{!$Resource.Order_field_mapping}"/>
+                <li>Go to Product tab and the same functionalities have been implemented on Customer and Order Tab :</li>
+                <img class="slds-p-vertical_small" src="{!$Resource.Product_tab}"/>
+            </ul>
+        </div>
+    </div>
+</aura:component>

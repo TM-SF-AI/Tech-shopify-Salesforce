@@ -1,0 +1,4 @@
+<aura:event type="APPLICATION" description="Event to handle Mapping">
+    <aura:attribute name="modalValue" type="boolean"/>
+    <aura:attribute name="defaultAppName" type="String"/>
+</aura:event>
